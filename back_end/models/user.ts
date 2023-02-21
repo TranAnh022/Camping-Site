@@ -3,6 +3,7 @@ import passportLocalMongoose = require("passport-local-mongoose");
 
 export interface UserType {
   email: String;
+  username: String;
 }
 
 export const UserSchema = new Schema({
@@ -10,6 +11,9 @@ export const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  username: {
+    typre: String,
   },
 });
 

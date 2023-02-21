@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from "express";
 const User = require("../models/user");
 //--Create User--
@@ -24,10 +23,14 @@ export const createUser = async (
 
 //--login--
 export const login = async (req: Request, res: Response) => {
-  const redirectUrl = (req.session as any).returnTo || "/campsites";
-  res.send(200).json("success, Welcome back!");
-  delete (req.session as any).returnTo; // keep no remants(the url) in the session
-  res.redirect(redirectUrl);
+  try {
+    const { username } = req.body;
+    const user = await User.findOne({ username: username });
+    if (!user) res.status(400).json(user);
+    res.status(200).json({ user });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
 };
 
 //--logout--
