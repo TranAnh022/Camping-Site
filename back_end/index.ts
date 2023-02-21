@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
 const LocalStrategy = require("passport-local");
 const passport = require("passport");
 
@@ -11,15 +11,14 @@ const User = require("./models/user.ts"); // requires the model with Passport-Lo
 const userRouter = require("./routes/userRoutes");
 const campsiteRouter = require("./routes/campSiteRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
-
-dotenv.config();
+const cors = require("cors");
 
 //-- connect to mongoose ---
 const MongoDBStore = require("connect-mongo")(session);
 
 //const dbUrl = process.env.DB_URL
 const dbUrl = process.env.MONGO_URL || "mongodb://localhost:27017/campsite";
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -59,7 +58,7 @@ const sessionConfig = {
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
 };
-
+app.use(cors());
 app.use(session(sessionConfig));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); // because the req.body was not parsered lead to we need to use express.urlencoded to parse the request body
