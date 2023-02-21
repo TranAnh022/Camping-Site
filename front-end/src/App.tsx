@@ -1,17 +1,38 @@
 import React from "react";
+
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Campsite from "./scences/Campsites";
 import Login from "./scences/LoginPage";
 import Register from "./scences/RegisterPage";
 
+export interface CampsiteType {
+  _id: string;
+  title: string;
+  location: string;
+  geometry?: {
+    type: string;
+    coordinates: Array<Number>;
+  };
+  reviews?: Array<Number>;
+  price?: number;
+  description: string;
+  author: number;
+  images: [
+    {
+      fileName: string;
+      url: string;
+    }
+  ];
+}
+
 function App() {
   return (
-    <div className="">
+    <div className={`app`}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/campsite" element={<Campsite/>}/>
+          <Route path="/campsites" element={<Campsite />} />
         </Routes>
       </BrowserRouter>
     </div>

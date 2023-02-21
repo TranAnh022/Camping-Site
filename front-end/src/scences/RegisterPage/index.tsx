@@ -1,12 +1,19 @@
-import React from "react";
+import React,{useState} from "react";
 
 type Props = {};
 
 const Register = (props: Props) => {
+  const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("")
+  
+  const register = () => {
+
+  }
   return (
     <div
       className="containe d-flex flex-md-row text-white flex-column gap-md-3"
-      style={{ height: "100vh",width:"100vw" }}
+      style={{ height: "100vh", width: "100vw" }}
     >
       {/* LEFT */}
       <div className="col col-sm-5 registerPage ">
@@ -25,8 +32,8 @@ const Register = (props: Props) => {
           <h1 className="display-4"> Join Camping Site</h1>
           <div className="mb-5">
             Already have an account ?{" "}
-            <a href="/" className="text-decoration-none">
-              Login
+            <a href="/" className="text-decoration-none text-info">
+              <b>Login</b>
             </a>{" "}
           </div>
           <form action="" className="d-flex flex-column gap-3 w-100">

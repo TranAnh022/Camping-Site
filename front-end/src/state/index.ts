@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { CampsiteType } from "../App";
 
 const initialState = {
         mode: "light",
@@ -6,19 +7,12 @@ const initialState = {
         campsites: [],
 }
 
-interface CampsiteType{
-        title: String,
-        _id: String,
-        location: String,
-        images?: Array<String>,
-        description:String
-}
 
 export const authSlice = createSlice({
         name: "auth",
         initialState,
         reducers: {
-                setMode: (state) => {
+                setModeLightDark: (state) => {
                         state.mode= state.mode === "light" ? "dark" : "light"
                 },
                 setLogin: (state,action) => {
@@ -41,5 +35,6 @@ export const authSlice = createSlice({
         }
 })
 
-export const { setMode, setLogin, setLogout, setCampsite, setCampsites } = authSlice.actions;
+export const { setModeLightDark, setLogin, setLogout, setCampsite, setCampsites } =
+  authSlice.actions;
 export default authSlice;

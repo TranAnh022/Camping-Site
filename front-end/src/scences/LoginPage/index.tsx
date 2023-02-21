@@ -1,10 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import Footer from "../../components/Footer";
+import { setLogin } from "../../state";
 
 type Props = {};
 
 const Login = (props: Props) => {
+  const [password, setPassword] = useState("");
+  const [username, setUserName] = useState("");
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    const loggedInResponse = await fetch("http://localhost:8080/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    })
+    const loggedIn = await loggedInResponse.json();
+    setUserName("")
+    setPassword("")
+    if (loggedIn) {
+      dispatch(
+        setLogin({
+          user: loggedIn.user
+        }))
+      navigate("/campsites")
+    } else {
+      setError("Incorrect username or password")
+    }
+  }
   return (
     <div className="login-background d-flex text-center text-white ">
       <div className="d-flex text-white text-center p-3 flex-column h-100 w-100">
@@ -20,14 +52,17 @@ const Login = (props: Props) => {
           <div className="card-body " style={{ width: "20rem" }}>
             <h2 className="card-title m-3">Login</h2>
             <hr></hr>
-            <form className="text-center ">
+            <form className="text-center" onSubmit={handleLogin}>
               <div className="mb-3 ">
-                <label className="form-label">Email address</label>
+                <label className="form-label">Username</label>
                 <input
-                  type="email"
+                  type="string"
+                  autoFocus
                   className="form-control"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUserName(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-4 ">
@@ -36,7 +71,9 @@ const Login = (props: Props) => {
                   type="password"
                   className="form-control"
                   id="exampleInputPassword1"
-                  autoFocus
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
               <button className="button p-1 rounded-4 bg-primary bg-opacity-55 text-white w-50 fs-5">

@@ -13,7 +13,9 @@
     "@types/react-dom": "^18.0.10",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
+    "dotenv": "^16.0.3",
     "framer-motion": "^9.0.2",
+    "mapbox-gl": "^2.12.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",
@@ -47,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/mapbox-gl": "^2.7.10"
   }
 }
