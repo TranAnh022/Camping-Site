@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Error from "../../components/Error";
 
 import Footer from "../../components/Footer";
 import { setLogin } from "../../state";
@@ -10,33 +11,43 @@ type Props = {};
 const Login = (props: Props) => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
-  const [error, setError] = useState("");
+  const [errorMess, setErrorMess] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) navigate("/campsites");
+  }, []);
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
+
     const loggedInResponse = await fetch("http://localhost:8080/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, password }),
-    })
-    const loggedIn = await loggedInResponse.json();
-    setUserName("")
-    setPassword("")
-    if (loggedIn) {
+    }).then(async (response) => {
+      if (!response.ok) {
+        setShowAlert(true);
+        setErrorMess("Invalid username or password");
+        return;
+      }
+      return response.json();
+    });
+    if (loggedInResponse) {
+      setUserName("");
+      setPassword("");
       dispatch(
         setLogin({
-          user: loggedIn.user
-        }))
-      navigate("/campsites")
-    } else {
-      setError("Incorrect username or password")
+          user: loggedInResponse.user,
+        })
+      );
+      navigate("/campsites");
     }
-  }
+  };
   return (
     <div className="login-background d-flex text-center text-white ">
       <div className="d-flex text-white text-center p-3 flex-column h-100 w-100">
@@ -45,10 +56,12 @@ const Login = (props: Props) => {
           Welcome to the camping site! Sign in to access your account and
           finding your next outdoor adventure
         </p>
+
         <div
           className="container mt-5 bg-black border-3 rounded-4 bg-opacity-50"
           style={{ width: "22rem" }}
         >
+          {showAlert && <Error error={errorMess} setShowAlert={setShowAlert} />}
           <div className="card-body " style={{ width: "20rem" }}>
             <h2 className="card-title m-3">Login</h2>
             <hr></hr>

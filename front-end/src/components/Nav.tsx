@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setLogout, setModeLightDark } from "../state";
 
 type Props = {};
@@ -8,8 +9,9 @@ type Props = {};
 const Nav = (props: Props) => {
   const [mode, setMode] = useState("light");
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useSelector((state: any) => state);
+  const  user  = localStorage.getItem("user")
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toggleLightDark = () => {
     setMode(mode === "light" ? "dark" : "light");
     dispatch(setModeLightDark());
@@ -17,6 +19,7 @@ const Nav = (props: Props) => {
 
   const handleLogout = () => {
     dispatch(setLogout());
+    navigate("/");
   };
 
   return (
@@ -47,12 +50,12 @@ const Nav = (props: Props) => {
         >
           <ul className="navbar-nav text-center">
             <li className="nav-item">
-              <a className="nav-link fs-6 active" href="/">
+              <a className="nav-link fs-6 active" href="/campsites">
                 Home
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link fs-6" href="#">
+              <a className="nav-link fs-6" href="/campsites/create">
                 Create Campsite
               </a>
             </li>
@@ -61,7 +64,7 @@ const Nav = (props: Props) => {
           {user ? (
             <ul className="navbar-nav text-center">
               <li className="nav-item">
-                <a className="nav-link fs-6" href="/" onClick={handleLogout}>
+                <a className="nav-link fs-6" onClick={handleLogout}>
                   Logout
                 </a>
               </li>

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Campsite from "./scences/Campsites";
+import Create from "./scences/Campsites/Create";
 import Login from "./scences/LoginPage";
 import Register from "./scences/RegisterPage";
 
@@ -24,8 +25,8 @@ export interface CampsiteType {
     }
   ];
 }
-
 function App() {
+
   return (
     <div className={`app`}>
       <BrowserRouter>
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/campsites" element={<Campsite />} />
+          <Route path="/campsites/create" element={<Create />} />
         </Routes>
       </BrowserRouter>
     </div>

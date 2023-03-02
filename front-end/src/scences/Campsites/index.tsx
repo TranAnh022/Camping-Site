@@ -18,7 +18,8 @@ const campgroundLocation = {
 };
 
 const Campsite = (props: Props) => {
-  const { mode, campsites, user} = useSelector((state: any) => state);
+  const { mode, campsites } = useSelector((state: any) => state);
+  const user = localStorage.getItem("user")
   const dispatch = useDispatch();
   const navigate = useNavigate();
   if(!user)  navigate("/")
