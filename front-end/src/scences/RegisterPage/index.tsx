@@ -14,12 +14,13 @@ const Register = (props: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   useEffect(() => {}, [errorMess]);
   const register = async (e: any) => {
     e.preventDefault();
     const registerResponse = await fetch("http://localhost:8080/register", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -27,22 +28,22 @@ const Register = (props: Props) => {
     }).then(async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        setShowAlert(true)
+        setShowAlert(true);
         setErrorMess(responseJson.message);
       }
-      return responseJson
+      return responseJson;
     });
     if (registerResponse.registerUser) {
       setUsername("");
       setPassword("");
       setEmail("");
-        dispatch(
-          setLogin({
-            user: registerResponse.registerUser,
-          })
-        );
-        navigate("/campsites");
-      }
+      dispatch(
+        setLogin({
+          user: registerResponse.registerUser,
+        })
+      );
+      navigate("/campsites");
+    }
   };
   return (
     <div
@@ -67,15 +68,12 @@ const Register = (props: Props) => {
           <h1 className="display-4"> Join Camping Site</h1>
           <div className="mb-5">
             Already have an account ?{" "}
-            <a href="/" className="text-decoration-none text-info">
+            <a href="/login" className="text-decoration-none text-info">
               <b>Login</b>
             </a>{" "}
           </div>
 
-            {showAlert && (
-              <Error error={errorMess} setShowAlert={setShowAlert} />
-            )}
-
+          {showAlert && <Error error={errorMess} setShowAlert={setShowAlert} />}
 
           <form className="d-flex flex-column gap-3 w-100" onSubmit={register}>
             <div className="row g-3 align-items-center">

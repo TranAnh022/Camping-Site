@@ -23,13 +23,13 @@ export const authSlice = createSlice({
       state.user = null;
     },
           setRegister: (state) => {
-            
+
     },
     setCampsites: (state, action) => {
       state.campsites = action.payload.campsites;
     },
     setCampsite: (state, action) => {
-      const campsiteUpdate = action.payload.campsites(
+      const campsiteUpdate = action.payload.campsites.map(
         (campsite: CampsiteType) => {
           if (campsite._id === action.payload.campsite._id)
             return action.payload.campsite;

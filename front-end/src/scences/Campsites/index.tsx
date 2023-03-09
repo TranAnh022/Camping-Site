@@ -18,13 +18,12 @@ const campgroundLocation = {
 };
 
 const Campsite = (props: Props) => {
-  const { mode, campsites } = useSelector((state: any) => state);
-  const user = localStorage.getItem("user")
+  const { campsites } = useSelector((state: any) => state);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  if(!user)  navigate("/")
+
   const getCamsites = async () => {
     const response = await fetch("http://localhost:8080/campsites", {
+      credentials: "include",
       method: "GET",
     });
     const data = await response.json();
@@ -35,21 +34,15 @@ const Campsite = (props: Props) => {
   }, []);
 
   return (
-
     <div
-      className={`container-fuild d-flex flex-column bg-${
-        mode === "light" ? "light" : "black text-light"
-        }`}
+      className={`container-fuild d-flex flex-column`}
     >
       <Nav />
       {/* <Map campgroundLocation={campgroundLocation} /> */}
       {/* <Mapbox campgroundLocation={campgroundLocation} /> */}
-      <div
-        className="container d-flex flex-column align-items-center mt-3"
-
-      >
-        <h1>Explore the Camping Site</h1>
-        <div className="row justify-content-center gap-5 ">
+      <div className="container d-flex flex-column align-items-center mt-3">
+        <h1 className="text-center">Explore the Camping Site</h1>
+        <div className="row justify-content-center gap-md-5 ">
           {campsites.map((props: CampsiteType) => (
             <CampsiteCard {...props} key={props._id} />
           ))}

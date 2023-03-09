@@ -9,7 +9,7 @@ type Props = {};
 const Nav = (props: Props) => {
   const [mode, setMode] = useState("light");
   const [isOpen, setIsOpen] = useState(false);
-  const  user  = localStorage.getItem("user")
+  const user = localStorage.getItem("user");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toggleLightDark = () => {
@@ -27,7 +27,7 @@ const Nav = (props: Props) => {
       className={`container-fluid bg-${mode === "light" ? "white" : "dark"} `}
       data-bs-theme={`${mode}`}
     >
-      <nav className={`navbar navbar-expand-lg p-3`}>
+      <nav className={`navbar navbar-expand-sm p-3`}>
         <a className={`navbar-brand text-weight-bold fs-3`} href="#">
           Camping Site
         </a>
@@ -44,13 +44,13 @@ const Nav = (props: Props) => {
         </button>
         <div
           className={`collapse navbar-collapse ${
-            isOpen ? "show " : "flex-xl-row justify-content-xl-between "
+            isOpen ? "show " : "flex-xl-row justify-content-sm-between"
           } `}
           id="navbarNav"
         >
           <ul className="navbar-nav text-center">
             <li className="nav-item">
-              <a className="nav-link fs-6 active" href="/campsites">
+              <a className="nav-link fs-6 active" href="/">
                 Home
               </a>
             </li>
@@ -81,17 +81,7 @@ const Nav = (props: Props) => {
               </li>
             </ul>
           ) : (
-            <ul className="navbar-nav text-center">
-              <li className="nav-item">
-                <a className="nav-link fs-6" href="/register">
-                  Register
-                </a>
-              </li>
-              <li className="nav-item ">
-                <a className="nav-link fs-6" href="/">
-                  Login
-                </a>
-              </li>
+            <ul className="navbar-nav text-center gap-3">
               <li>
                 {mode === "light" ? (
                   <button className="btn" onClick={toggleLightDark}>
@@ -102,6 +92,16 @@ const Nav = (props: Props) => {
                     <MdLightMode className="text-white" />
                   </button>
                 )}
+              </li>
+              <li className="nav-item ">
+                <a className="nav-link fs-6" href="/login">
+                  Login
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link fs-6 btn btn-primary text-white" href="/register">
+                  Sign up
+                </a>
               </li>
             </ul>
           )}

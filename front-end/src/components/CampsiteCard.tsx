@@ -16,10 +16,12 @@ const CampsiteCard = (props: CampsiteType) => {
         hidden: { opacity: 0, x: -50 },
         visible: { opacity: 1, x: 0 },
       }}
-      className={`card mb-3 bg-${mode === "light" ? "white" : "dark"} col-5 `}
+      className={`card mb-3 bg-${
+        mode === "light" ? "white" : "dark"
+      } col-md-5 col-11 `}
     >
       <img
-        src={images === undefined ? "" : images[0]?.url}
+        src={images === undefined ? "" : images?.url}
         alt={`${title} campsite`}
         style={{
           width: "100%",
@@ -31,8 +33,10 @@ const CampsiteCard = (props: CampsiteType) => {
       <div className="card-body ">
         <div className="card-title">{title}</div>
         <p className={`${mode === "dark" ? "" : "text-muted"}`}>{location}</p>
-        <div className="card-text mb-3">{description}</div>
-        <button className="btn btn-primary mb-3">View {title}</button>
+        <div className="card-text mb-3">{description.slice(0, 125)}...</div>
+        <a className="btn btn-primary mb-3" href={`/campsites/${_id}`}>
+          View {title}
+        </a>
       </div>
     </motion.div>
   );

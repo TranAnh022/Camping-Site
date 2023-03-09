@@ -1,42 +1,48 @@
-import React, { useState, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
+import { useState } from "react";
+import ReactMapGL, { Marker, Popup, NavigationControl } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYW5odHJhbjAyMiIsImEiOiJja3lxYTNjeTAwaTN4MnJtbXF3MWVtYnM0In0.QA6XD9XrmsSG7ULdNNuQkA";
-
-interface CampgroundLocation {
-  latitude: number;
-  longitude: number;
-}
-
-interface MapProps {
-  campgroundLocation: CampgroundLocation;
-}
-
-const Map: React.FC<MapProps> = ({ campgroundLocation }) => {
-  const [map, setMap] = useState<mapboxgl.Map | null>(null);
-
-  useEffect(() => {
-    const newMap = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/dark-v10",
-      center: [campgroundLocation.longitude, campgroundLocation.latitude],
-      zoom: 9,
-    });
-    new mapboxgl.Marker()
-      .setLngLat([campgroundLocation.longitude, campgroundLocation.latitude])
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }).setHTML(
-          `<h3>VietNam</h3><p>Vietanm</p>`
-        )
-      )
-      .addTo(newMap);
-    if (!map) {
-      setMap(newMap);
-    }
-  }, [map, campgroundLocation]);
-
-  return <div id="map" style={{ width: "100%", height: "500px" }} />;
+type Props = {
+  coordinates: {
+    longitude: number;
+    latitude: number;
+  };
+  title: string;
+  location: string;
+  mode:string
 };
 
-export default Map;
+export default function Map({ coordinates, title, location,mode }: Props) {
+  const [showPopup, setShowPopup] = useState(true);
+
+  return (
+    <ReactMapGL
+      initialViewState={{
+        longitude: coordinates.longitude,
+        latitude: coordinates.latitude,
+        zoom: 9,
+      }}
+      style={{
+        height: "300px",
+        borderRadius: "calc(0.375rem - 1px)",
+      }}
+      mapStyle={`${mode === "light" ? "mapbox://styles/mapbox/streets-v9" : "mapbox://styles/mapbox/dark-v9" }`}
+      mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+    >
+      <NavigationControl />
+      <Marker
+        {...coordinates}
+        anchor="bottom"
+        onClick={() => setShowPopup(true)}
+      />
+      {showPopup && (
+        <Popup {...coordinates} onClose={() => setShowPopup(false)}>
+          <div className={`${mode === "dark" && "text-dark"}`}>
+            <h5 className="text-uppercase">{title}</h5>
+            <p>{location}</p>
+          </div>
+        </Popup>
+      )}
+    </ReactMapGL>
+  );
+}

@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Nav from "../../components/Nav";
 import { AiOutlineDelete } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import Error from "../../components/Error";
 
 type Props = {};
 
@@ -10,12 +12,19 @@ const Create = (props: Props) => {
   const { mode } = useSelector((state: any) => state);
   const [img, setImg] = useState<null | File>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [errorMess, setErrorMess] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const [camp, setCamp] = useState({
     title: "",
     location: "",
     price: 0,
     description: "",
   });
+  const user = localStorage.getItem("user");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) navigate("/");
+  }, []);
 
   //Handle Iput
   const handleInputChange = (
@@ -46,23 +55,34 @@ const Create = (props: Props) => {
   };
 
   //Handle submit
+  console.log(camp);
 
   const createCamp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:8080/campsites", {
-      method: "POST",
-      body: JSON.stringify(camp),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to create campground");
+    try {
+      axios.post("http://localhost:8080/campsites", camp, {
+        withCredentials: true, // Send cookies with request
+        headers: {
+          "Content-Type": "multipart/form-data", // Set appropriate headers
+        },
+      }).then(() => {
+        setCamp({
+          title: "",
+          location: "",
+          price: 0,
+          description: ""
+        })
+        navigate("/")
+      });
+
+    } catch (error) {
+      setShowAlert(true);
+      setErrorMess("There is an error. Please check again !!!");
     }
   };
-
   return (
     <div
-      className={`container-fuild d-flex flex-column bg-${
-        mode === "light" ? "light" : "black text-light"
-      } align-items-center`}
+      className={`container-fuild d-flex flex-column align-items-center`}
       style={{ height: "100vh" }}
     >
       <Nav />
@@ -72,10 +92,17 @@ const Create = (props: Props) => {
           mode === "light" ? "white" : "dark"
         } col-md-6 my-5 h-full`}
       >
+        {showAlert && <Error error={errorMess} setShowAlert={setShowAlert} />}
         <div className="row h-full">
-          <h1 className="text-center my-3">New Campground</h1>
+          <h1 className="text-center my-3">New Camping Site</h1>
           <div className="col-6 offset-3">
-            <form onSubmit={createCamp} noValidate className="validation_form">
+            {/* FORM  */}
+            <form
+              onSubmit={createCamp}
+              noValidate
+              className="validation_form"
+              encType="multipart/form-data"
+            >
               <div className="mb-3">
                 <label className="form-label" htmlFor="title">
                   Title
@@ -118,7 +145,6 @@ const Create = (props: Props) => {
                   type="file"
                   id="formFileMultiple"
                   name="image"
-                  multiple
                   onChange={handleImageChange}
                 />
                 {imageUrl && (
@@ -127,7 +153,7 @@ const Create = (props: Props) => {
                       src={imageUrl}
                       alt="Selected"
                       className="img-thumbnail"
-                      style={{ width: "10vw" }}
+                      style={{ width: "10vw",height:"10vh" }}
                     />
                     <AiOutlineDelete
                       type="button"

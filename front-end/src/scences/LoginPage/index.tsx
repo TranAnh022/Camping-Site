@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Error from "../../components/Error";
 
@@ -15,6 +15,7 @@ const Login = (props: Props) => {
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) navigate("/campsites");
@@ -25,6 +26,7 @@ const Login = (props: Props) => {
 
     const loggedInResponse = await fetch("http://localhost:8080/login", {
       method: "POST",
+      credentials: 'include',
       headers: {
         "Content-Type": "application/json",
       },
@@ -45,7 +47,7 @@ const Login = (props: Props) => {
           user: loggedInResponse.user,
         })
       );
-      navigate("/campsites");
+      navigate("/");
     }
   };
   return (
