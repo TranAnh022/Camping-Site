@@ -7,7 +7,8 @@ import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
-//import cloudinary from "../cloudinary";
+
+const cloudinary = require("../cloudinary");
 
 // READ
 
@@ -47,16 +48,16 @@ export const createCampSite = async (req: Request, res: Response) => {
   try {
     const geoData = await geocoder
       .forwardGeocode({
-        query: req.body.campsite.location,
+        query: req.body.location,
         limit: 1,
       })
       .send();
-
     const userTypeWithId = req.user as UserType & { _id: string };
-    const { title, location, price, description } = req.body.campsite;
+    const { title, location, price, description } = req.body;
+    console.log("body", req.body);
     const campsite = new CampSite({
       title,
-      image: {
+      images: {
         url: req.file?.path,
         fileName: req.file?.fieldname,
       },
@@ -68,8 +69,10 @@ export const createCampSite = async (req: Request, res: Response) => {
     });
     await campsite.save();
     res.status(200).json(campsite);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } catch (error) {
+    (error: string) => {
+      res.status(500).send(error);
+    };
   }
 };
 
@@ -78,15 +81,34 @@ export const createCampSite = async (req: Request, res: Response) => {
 export const editCampsite = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const campsiteUpdated = await CampSite.findByIdAndUpdate(id, {
-      ...req.body.campsite,
-    });
-    campsiteUpdated.image = {
-      url: req.file?.path,
-      fileName: req.file?.fieldname,
+    const randomNumber = Math.floor(Math.random() * 1000);
+    const image = {
+      url:
+        req?.file?.path ||
+        "https://images.unsplash.com/photo-1607908560428-36ff9e0363b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8Y2FtcGluZ3x8fHx8fDE2NzgzNzk5NjI&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
+      fileName: req?.file?.filename || `campsites/${randomNumber}`,
     };
-    await campsiteUpdated.save();
-    res.status(200).json("Updated successfully!!!");
+    const campsite = await CampSite.findById(id);
+    const geoData = await geocoder
+      .forwardGeocode({
+        query: req.body.location,
+        limit: 1,
+      })
+      .send();
+
+    if (image.fileName !== campsite.images.fileName) {
+      await cloudinary?.uploader?.destroy(campsite.images.fileName);
+    }
+    const campsiteUpdated = await CampSite.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        images: image,
+        geometry: geoData.body.features[0].geometry,
+      },
+      { new: true }
+    );
+    res.status(200).json(campsiteUpdated);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

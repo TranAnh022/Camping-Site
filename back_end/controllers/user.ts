@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 const User = require("../models/user");
+// import { Session } from "express-session";
+
 //--Create User--
+
+// interface SessionWithReturnTo extends Session {
+//   returnTo?: string;
+// }
 
 export const createUser = async (
   req: Request,
@@ -8,20 +14,19 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body);
     const { username, email, password } = req.body;
     const user = new User({ email, username });
     const registerUser = await User.register(user, password); //using the register method from password middleware
     req.login(registerUser, (err) => {
       if (err) return next(err);
-      res.status(200).json("success ,Welcome to Yelp Camp!");
+      res.status(200).json({ registerUser });
     });
   } catch (e: any) {
     res.status(400).json({ message: e.message });
   }
 };
 
-//--login--
+// --login--
 export const login = async (req: Request, res: Response) => {
   try {
     const { username } = req.body;
@@ -32,6 +37,14 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ error: e.message });
   }
 };
+
+// export const login = async (req: Request, res: Response) => {
+//     console.log(req.user)
+//     const session = req.session as SessionWithReturnTo;
+//     const redirectUrl = session.returnTo || "/campgrounds";
+//     delete session.returnTo;
+//     res.redirect(redirectUrl);
+// }
 
 //--logout--
 export const logout = async (

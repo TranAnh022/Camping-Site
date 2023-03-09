@@ -1,5 +1,5 @@
 const cloudinary = require("cloudinary").v2;
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 cloudinary.config({
   //setting cofiguration parameters globally
